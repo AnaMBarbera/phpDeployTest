@@ -1,0 +1,39 @@
+name: Deploy to InfinityFree
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Upload public files to htdocs/
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./src/public/
+          server-dir: /htdocs/
+
+      - name: Upload src files (excluding public) to htdocs/src/
+        run: |
+          # Crear carpeta temporal para copiar sin public
+          mkdir temp_src
+          shopt -s extglob
+          cp -r src/!(public) temp_src/
+        shell: bash
+
+      - name: Upload src (except public) to htdocs/src
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./temp_src/
+          server-dir: /htdocs/src/
