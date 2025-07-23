@@ -1,3 +1,5 @@
+<h1> Página de despliege con github actions </h1>
+
 <?php
 if (file_exists(__DIR__ . '/../config/db.php')) {
     echo "ejecución en local <br>";
