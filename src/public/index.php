@@ -1,17 +1,20 @@
-<h1> Página de despliege con github actions </h1>
-
 <?php
-if (file_exists(__DIR__ . '/../config/db.php')) {
-    echo "ejecución en local <br>";
-    $configPath = __DIR__ . '/../config/';
-} elseif (file_exists(__DIR__ . '/src/config/db.php')) {
-    echo "ejecución en producción <br>";
-    $configPath = __DIR__ . '/src/config/';
-} else {
-    die("Error: No se encontró el directorio config.");
+
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
 }
 
-require_once $configPath . 'db.php';
-require_once $configPath . 'server.php';
+// Register the Composer autoloader...
+require __DIR__.'/../vendor/autoload.php';
 
-phpinfo();
+// Bootstrap Laravel and handle the request...
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$app->handleRequest(Request::capture());
