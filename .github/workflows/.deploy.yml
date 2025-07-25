@@ -62,6 +62,8 @@ jobs:
           server-dir: /htdocs/src/vendor/
           state-name: ftpdeploy-vendor
           dangerous-clean-slate: true
+          exclude: |
+            **/.*  # Excluir todos los dotfiles (ej: .gitignore, .htaccess)
 
       - name: Create .env file in temp folder
         run: |
@@ -106,3 +108,4 @@ jobs:
           local-dir: ./temp_env/
           server-dir: /htdocs/src/
           include: '.env'
+
