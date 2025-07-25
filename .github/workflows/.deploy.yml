@@ -1,5 +1,4 @@
 name: Deploy to InfinityFree
-
 on:
   push:
     branches:
@@ -12,14 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up PHP with Composer
+      - name: Set up PHP with composer
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           extensions: mbstring, intl
           tools: composer
 
-      - name: Install dependencies with Composer
+      - name: Install dependencies with composer
         working-directory: ./src
         run: composer install --no-dev --optimize-autoloader
 
@@ -32,6 +31,9 @@ jobs:
           local-dir: ./src/public/
           server-dir: /htdocs/
           state-name: ftpdeploy-public
+          exclude: |
+            **/.*
+            **/.*/**
 
       - name: Prepare src without public
         run: |
@@ -40,7 +42,7 @@ jobs:
           cp -r src/!(public) temp_src/
         shell: bash
 
-      - name: Upload src (except public and vendor) to htdocs/src/
+      - name: Upload src (except public) to htdocs/src/
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -48,22 +50,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./temp_src/
           server-dir: /htdocs/src/
-          exclude: |
-            vendor/
           state-name: ftpdeploy-src
-
-      - name: Upload vendor folder to htdocs/src/vendor/
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./src/vendor/
-          server-dir: /htdocs/src/vendor/
-          state-name: ftpdeploy-vendor
-          dangerous-clean-slate: true
           exclude: |
-            **/.*  # Excluir todos los dotfiles (ej: .gitignore, .htaccess)
+            **/.*
+            **/.*/**
 
       - name: Create .env file in temp folder
         run: |
@@ -108,4 +98,3 @@ jobs:
           local-dir: ./temp_env/
           server-dir: /htdocs/src/
           include: '.env'
-
