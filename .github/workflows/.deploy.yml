@@ -19,7 +19,7 @@ jobs:
           extensions: mbstring, intl
           tools: composer
 
-      - name: Install dependencies with composer
+      - name: Install dependencies with Composer
         working-directory: ./src
         run: composer install --no-dev --optimize-autoloader
 
@@ -40,7 +40,7 @@ jobs:
           cp -r src/!(public) temp_src/
         shell: bash
 
-      - name: Upload src (except public) to htdocs/src/
+      - name: Upload src (except public and vendor) to htdocs/src/
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -48,6 +48,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./temp_src/
           server-dir: /htdocs/src/
+          exclude: |
+            vendor/
           state-name: ftpdeploy-src
 
       - name: Upload vendor folder to htdocs/src/vendor/
@@ -59,6 +61,7 @@ jobs:
           local-dir: ./src/vendor/
           server-dir: /htdocs/src/vendor/
           state-name: ftpdeploy-vendor
+          dangerous-clean-slate: true
 
       - name: Create .env file in temp folder
         run: |
