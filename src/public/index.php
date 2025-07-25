@@ -12,7 +12,7 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 } elseif (file_exists(__DIR__ . '/src/vendor/autoload.php')) {
     // Estamos en producción en InfinityFree con estructura modificada
     $basePath = realpath(__DIR__ . '/src/');
-    //echo "Ejecución en producción<br>";
+    echo "Ejecución en producción <br>";
 } else {
     die("No se ha podido detectar el entorno de ejecución. Path:" . realpath(__DIR__ . '/src/'));
 }
