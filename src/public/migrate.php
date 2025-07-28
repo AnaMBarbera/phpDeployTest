@@ -8,7 +8,7 @@ use Illuminate\Console\Application as ArtisanConsole;
 
 $basePath = __DIR__ . '/../';
 
-require __DIR__ . $basePath . 'vendor/autoload.php';
+require $basePath . 'vendor/autoload.php';
 
 // Definir la clave para acceder
 define('SECRET_KEY', '123456');
