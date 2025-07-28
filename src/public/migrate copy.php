@@ -6,12 +6,10 @@ error_reporting(E_ALL);
 use Illuminate\Foundation\Application;
 use Illuminate\Console\Application as ArtisanConsole;
 
-$basePath = __DIR__ . '/../';
-
-require __DIR__ . $basePath . 'vendor/autoload.php';
+require __DIR__ . '/src/vendor/autoload.php';
 
 // Definir la clave para acceder
-define('SECRET_KEY', '123456');
+define('SECRET_KEY', 'PhpDeploy');
 
 // Validar key y acción
 $key = $_GET['key'] ?? '';
@@ -28,6 +26,8 @@ if (!in_array($action, $allowedActions)) {
     http_response_code(400);
     exit('Acción no permitida.');
 }
+
+$basePath = __DIR__ . '/src';
 
 // Bootstrap de la aplicación Laravel
 $app = require_once $basePath . '/bootstrap/app.php';
@@ -59,5 +59,5 @@ $output = ob_get_clean();
 
 // Enviar resultado
 header('Content-Type: text/plain; charset=utf-8');
-echo "Ejecutado comando: $action\n\n";
+echo "Ejecutando comando: $action\n\n";
 echo $output;
