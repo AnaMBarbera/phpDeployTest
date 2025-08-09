@@ -1,0 +1,177 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+a.button, button {
+    background-color: #007BFF;
+    color: white;
+    padding: 6px 12px;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+a.button:hover, button:hover {
+    background-color: #0056b3;
+}
+
+a.edit{
+    background-color: #fc8702;
+    color: #0f0f0f;
+    font-size: 15px;
+    padding: 7px 12px;
+}
+a.edit:hover{
+    background-color: #d37202;
+}
+button.delete{
+    background-color: red;
+}
+button.delete:hover{
+    background-color:rgb(177, 2, 2);
+}
+
+.blog-list {
+    list-style: none;
+    padding: 0;
+}
+
+.blog-card {
+    display: flex;
+    border-radius: 8px;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+
+    /* Sombra 3D */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 
+                0 8px 20px rgba(0,0,0,0.1);
+
+    background-color: #fff;
+
+    /* Transición para suavizar hover */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efecto hover para levantar la tarjeta */
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.2), 
+                0 20px 40px rgba(0,0,0,0.15);
+    cursor: pointer;
+}
+
+.blog-card img.main-image {
+    width: 150px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.blog-content {
+    flex: 1;
+}
+
+.blog-title {
+    margin: 0 0 10px 0;
+    font-size: 1.3em;
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+}
+
+.blog-excerpt {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.blog-actions {
+    margin-top: 10px;
+}
+
+.container{
+    width: 90%;
+    margin: 0 auto;
+}
+
+.post-main-image {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+
+.post-main-image img {
+    width: 100%;
+    height: 400px;
+    display: block;
+    object-fit: cover;
+}
+
+.post-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background-color: rgba(0,0,0,0.5); /* fondo semitransparente negro */
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 2.5rem;
+    max-width: 90%;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.post-title.no-image {
+    position: static;
+    background-color: transparent;
+    color: #333;
+    padding: 0;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+/* Contenedor de párrafos */
+.post-paragraph {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin: 30px 80px;
+}
+
+/* Imagen izquierda y derecha */
+.image-left, .image-right {
+    width: 40%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.image-left {
+    order: 0;
+    margin-right: 30px;
+}
+
+.image-right {
+    order: 2;
+    margin-left: 30px;
+}
+
+/* Texto en el centro con flex:1 para ajustar */
+.paragraph-text {
+    flex: 1;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #444;
+}
+
