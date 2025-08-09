@@ -20,7 +20,7 @@ if ($key !== SECRET_KEY) {
     exit('Acceso denegado.');
 }
 
-$allowedActions = ['migrate', 'reset', 'fresh'];
+$allowedActions = ['migrate', 'reset', 'fresh', 'storage-link'];
 
 if (!in_array($action, $allowedActions)) {
     http_response_code(400);
@@ -47,6 +47,9 @@ try {
             break;
         case 'fresh':
             $exitCode = $kernel->call('migrate:fresh', ['--force' => true]);
+            break;
+        case 'storage-link':
+            $exitCode = $kernel->call('storage:link', ['--force' => true]);
             break;
     }
 } catch (Exception $e) {
