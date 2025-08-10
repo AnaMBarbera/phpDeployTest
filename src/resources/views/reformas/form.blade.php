@@ -9,61 +9,59 @@
 
     <label>Foto Principal</label><br>
     <input type="file" name="main_image"><br>
-    @if(!empty($post->main_image))
-        <img src="{{ asset('storage/'.$post->main_image) }}" alt="Foto principal" width="150"><br>
+    @if(!empty($post->main_image_url))
+        <img src="{{ $post->main_image_url }}" alt="Foto principal" width="150"><br>
     @endif
     <br>
 
     <h3>Párrafos</h3>
     <div id="paragraphs">
-        @if(!empty(old('content')) && is_array(old('content')))
-            @foreach(old('content') as $i => $para)
-                <div class="paragraph-block" data-index="{{ $i }}">
-                    <textarea name="content[{{ $i }}][text]" placeholder="Texto del párrafo" required>{{ $para['text'] }}</textarea><br>
-                    <label>Foto Izquierda (opcional)</label>
-                    <input type="file" name="content[{{ $i }}][image_left]"><br>
-                    <label>Foto Derecha (opcional)</label>
-                    <input type="file" name="content[{{ $i }}][image_right]"><br>
-                    <button type="button" class="delete" onclick="removeParagraph({{ $i }})">Eliminar párrafo</button>
-                    <hr>
-                </div>
-            @endforeach
-        @elseif(!empty($post->content))
-            @foreach($post->content as $i => $para)
-                <div class="paragraph-block" data-index="{{ $i }}">
-                    <textarea name="content[{{ $i }}][text]" placeholder="Texto del párrafo" required>{{ $para['text'] }}</textarea><br>
-                    <label>Foto Izquierda (opcional)</label>
-                    <input type="file" name="content[{{ $i }}][image_left]"><br>
-                    <label>Foto Derecha (opcional)</label>
-                    <input type="file" name="content[{{ $i }}][image_right]"><br>
-                    @if(!empty($para['image_left']))
-                        <img src="{{ asset('storage/'.$para['image_left']) }}" alt="Izquierda" width="100">
-                    @endif
-                    @if(!empty($para['image_right']))
-                        <img src="{{ asset('storage/'.$para['image_right']) }}" alt="Derecha" width="100">
-                    @endif
-                    <button type="button" class="delete" onclick="removeParagraph({{ $i }})">Eliminar párrafo</button>
-                    <hr>
-                </div>
-            @endforeach
-        @else
-            <div class="paragraph-block" data-index="0">
-                <textarea name="content[0][text]" placeholder="Texto del párrafo" required></textarea><br>
-                <label>Foto Izquierda (opcional)</label>
-                <input type="file" name="content[0][image_left]"><br>
-                <label>Foto Derecha (opcional)</label>
-                <input type="file" name="content[0][image_right]"><br>
-                <button type="button" class="delete" onclick="removeParagraph(0)">Eliminar párrafo</button>
-                <hr>
-            </div>
-        @endif
+        @php
+            $contents = old('content', $post->content_with_image_urls ?? []);
+        @endphp
+
+    @if(!empty($contents) && is_array($contents))
+    @foreach($contents as $i => $para)
+        <div class="paragraph-block" data-index="{{ $i }}">
+            <textarea name="content[{{ $i }}][text]" placeholder="Texto del párrafo">{{ $para['text'] ?? '' }}</textarea><br>
+        
+            <label>Foto Izquierda (opcional)</label><br>
+            <input type="file" name="image_left_{{ $i }}"><br>
+            @if(!empty($para['image_left_url']))
+                <img src="{{ $para['image_left_url'] }}" alt="Izquierda" width="100"><br>
+            @endif
+        
+            <label>Foto Derecha (opcional)</label><br>
+            <input type="file" name="image_right_{{ $i }}"><br>
+            @if(!empty($para['image_right_url']))
+                <img src="{{ $para['image_right_url'] }}" alt="Derecha" width="100"><br>
+            @endif
+        
+            <button type="button" class="delete" onclick="removeParagraph({{ $i }})">Eliminar párrafo</button>
+            <hr>
+        </div>
+    @endforeach
+    @else
+    <div class="paragraph-block" data-index="0">
+        <textarea name="content[0][text]" placeholder="Texto del párrafo"></textarea><br>
+        <label>Foto Izquierda (opcional)</label><br>
+        <input type="file" name="image_left_0"><br>
+        <label>Foto Derecha (opcional)</label><br>
+        <input type="file" name="image_right_0"><br>
+        <button type="button" class="delete" onclick="removeParagraph(0)">Eliminar párrafo</button>
+        <hr>
     </div>
+    @endif
+
+    </div>
+
     <button type="button" onclick="addParagraph()">Añadir párrafo</button><br><br>
 
     <button type="submit">{{ $buttonText }}</button>
 </form>
 
 <script>
+    // Inicializamos el contador según los bloques ya presentes
     let paragraphCount = document.querySelectorAll('.paragraph-block').length;
 
     function addParagraph() {
@@ -74,11 +72,11 @@
         div.classList.add('paragraph-block');
         div.dataset.index = index;
         div.innerHTML = `
-            <textarea name="content[${index}][text]" placeholder="Texto del párrafo" required></textarea><br>
-            <label>Foto Izquierda (opcional)</label>
-            <input type="file" name="content[${index}][image_left]"><br>
-            <label>Foto Derecha (opcional)</label>
-            <input type="file" name="content[${index}][image_right]"><br>
+            <textarea name="content[${index}][text]" placeholder="Texto del párrafo"></textarea><br>
+            <label>Foto Izquierda (opcional)</label><br>
+            <input type="file" name="image_left_${index}"><br>
+            <label>Foto Derecha (opcional)</label><br>
+            <input type="file" name="image_right_${index}"><br>
             <button type="button" onclick="removeParagraph(${index})">Eliminar párrafo</button>
             <hr>
         `;
@@ -87,7 +85,9 @@
 
     function removeParagraph(index) {
         const div = document.querySelector(`.paragraph-block[data-index='${index}']`);
-        if(div) div.remove();
+        if (div) div.remove();
     }
 </script>
+
+
 

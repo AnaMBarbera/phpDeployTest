@@ -8,31 +8,27 @@ class Post extends Model
 {
     protected $fillable = ['title', 'main_image', 'content'];
 
-    // Para que Laravel convierta content automáticamente a array y viceversa
     protected $casts = [
         'content' => 'array',
     ];
 
-    // URL correcta para la imagen principal
     public function getMainImageUrlAttribute()
     {
-        $pathToCheck = $this->main_image;
-
-        if (!str_starts_with($pathToCheck, 'posts/')) {
-            $pathToCheck = 'posts/'.$pathToCheck;
+        if (!$this->main_image) {
+            return null;
         }
 
-        $path = public_path($pathToCheck);
+        $relativePath = $this->main_image;
 
-        if (file_exists($path)) {
-            return asset($pathToCheck);
+        // Aseguramos que empieza por posts/
+        if (!str_starts_with($relativePath, 'posts/')) {
+            $relativePath = 'posts/' . $relativePath;
         }
 
-        return url('src/public/'.$pathToCheck);
+        // Asumimos que siempre está accesible desde public/posts
+        return asset($relativePath);
     }
 
-
-    // Devuelve el contenido con URLs correctas para imágenes
     public function getContentWithImageUrlsAttribute()
     {
         $content = $this->content ?? [];
@@ -49,18 +45,13 @@ class Post extends Model
         return $content;
     }
 
-    // Método privado para resolver la URL de cualquier imagen
     private function resolveImageUrl($relativePath)
     {
         if (!str_starts_with($relativePath, 'posts/')) {
-            $relativePath = 'posts/'.$relativePath;
-        }
-        $path = public_path($relativePath);
-
-        if (file_exists($path)) {
-            return asset($relativePath);
+            $relativePath = 'posts/' . $relativePath;
         }
 
-        return url('src/public/'.$relativePath);
+        return asset($relativePath);
     }
 }
+

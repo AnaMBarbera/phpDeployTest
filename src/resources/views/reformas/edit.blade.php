@@ -5,7 +5,7 @@
 @section('content')
     <h1>Editar entrada</h1>
     @include('reformas.form', [
-        'action' => route('blog.update', ['blog' => $post->id]),
+        'action' => route('blog.update', ['id' => $post->id]),
         'method' => 'PUT',
         'buttonText' => 'Actualizar',
         'post' => $post
