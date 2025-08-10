@@ -15,3 +15,6 @@ Route::get('/', function() {
 
 Route::resource('blog', BlogController::class);
 
+Route::get('/debug/publicpath', function () {
+    return public_path('ruta.php');
+});
