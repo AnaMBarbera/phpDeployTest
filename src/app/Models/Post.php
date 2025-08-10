@@ -16,14 +16,21 @@ class Post extends Model
     // URL correcta para la imagen principal
     public function getMainImageUrlAttribute()
     {
-        $path = public_path($this->main_image);
+        $pathToCheck = $this->main_image;
 
-        if (file_exists($path)) {
-            return asset($this->main_image);
+        if (!str_starts_with($pathToCheck, 'posts/')) {
+            $pathToCheck = 'posts/'.$pathToCheck;
         }
 
-        return url('src/public/'.$this->main_image);
+        $path = public_path($pathToCheck);
+
+        if (file_exists($path)) {
+            return asset($pathToCheck);
+        }
+
+        return url('src/public/'.$pathToCheck);
     }
+
 
     // Devuelve el contenido con URLs correctas para imágenes
     public function getContentWithImageUrlsAttribute()
@@ -45,6 +52,9 @@ class Post extends Model
     // Método privado para resolver la URL de cualquier imagen
     private function resolveImageUrl($relativePath)
     {
+        if (!str_starts_with($relativePath, 'posts/')) {
+            $relativePath = 'posts/'.$relativePath;
+        }
         $path = public_path($relativePath);
 
         if (file_exists($path)) {
