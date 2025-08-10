@@ -12,7 +12,7 @@
                 <li class="blog-card">
                     <!-- Enlace al show -->
                     @if($post->main_image)
-                        <img src="{{ asset('storage/'.$post->main_image) }}" alt="Imagen principal" class="main-image">
+                        <img src="{{ asset($post->main_image) }}" alt="Imagen principal" class="main-image">
                     @endif
                     <div class="blog-content">
                         <a href="{{ route('blog.show', $post->id) }}" class="blog-title">{{ $post->title }}</a>
