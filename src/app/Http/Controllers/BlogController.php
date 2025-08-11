@@ -48,6 +48,10 @@ class BlogController extends Controller
             $fileName = time().'_'.$file->getClientOriginalName();
             //$file->move(public_path('posts'), $fileName);
             $file->move($basePath, $fileName);
+
+            // Dar permisos globales
+            chmod($basePath . '/' . $fileName, 0777);
+
             $data['main_image'] = 'posts/'.$fileName; 
         }
     
@@ -64,6 +68,8 @@ class BlogController extends Controller
                         if ($imageLeftFile && $imageLeftFile instanceof \Illuminate\Http\UploadedFile) {
                             $fileName = time().'_'.$imageLeftFile->getClientOriginalName();
                             $imageLeftFile->move($basePath, $fileName);
+                            // Dar permisos globales
+                            chmod($basePath . '/' . $fileName, 0777);
                             $paragraph['image_left'] = 'posts/'.$fileName;
                         }
                 
@@ -72,6 +78,8 @@ class BlogController extends Controller
                         if ($imageRightFile && $imageRightFile instanceof \Illuminate\Http\UploadedFile) {
                             $fileName = time().'_'.$imageRightFile->getClientOriginalName();
                             $imageRightFile->move($basePath, $fileName);
+                            // Dar permisos globales
+                            chmod($basePath . '/' . $fileName, 0777);
                             $paragraph['image_right'] = 'posts/'.$fileName;
                         }
                 
@@ -123,9 +131,17 @@ class BlogController extends Controller
         ];
 
         if ($request->hasFile('main_image')) {
+
+            $imagePath = str_replace('posts/', '', $post->main_image);
+            if (!empty($imagePath) && file_exists($basePath . '/' . $imagePath)) {
+                unlink($basePath . '/' . $imagePath);
+            }
+
             $file = $request->file('main_image');
             $fileName = time() . '_' . Str::random(6) . '_' . preg_replace('/\s+/', '_', $file->getClientOriginalName());
             $file->move($basePath, $fileName);
+            // Dar permisos globales
+            chmod($basePath . '/' . $fileName, 0777);
             $data['main_image'] = 'posts/' . $fileName;
         }
 
@@ -142,15 +158,38 @@ class BlogController extends Controller
 
                 $imageLeftFile = $request->file("image_left_{$index}");
                 if ($imageLeftFile && $imageLeftFile instanceof \Illuminate\Http\UploadedFile) {
+                    
+                    // Borrar la anterior
+                    if (!empty($paragraph['image_left'])) {
+                        $imageLeftPath = str_replace('posts/', '', $paragraph['image_left']);
+                        if (file_exists($basePath . '/' . $imageLeftPath)) {
+                            unlink($basePath . '/' . $imageLeftPath);
+                        }
+                    }
+
+
                     $fileName = time() . '_' . Str::random(6) . '_' . preg_replace('/\s+/', '_', $imageLeftFile->getClientOriginalName());
                     $imageLeftFile->move($basePath, $fileName);
+                    // Dar permisos globales
+                    chmod($basePath . '/' . $fileName, 0777);
                     $paragraph['image_left'] = 'posts/' . $fileName;
                 }
 
                 $imageRightFile = $request->file("image_right_{$index}");
                 if ($imageRightFile && $imageRightFile instanceof \Illuminate\Http\UploadedFile) {
+
+                    // Borrar la anterior                  
+                    if (!empty($paragraph['image_right'])) {
+                        $imageRightPath = str_replace('posts/', '', $paragraph['image_right']);
+                        if (file_exists($basePath . '/' . $imageRightPath)) {
+                            unlink($basePath . '/' . $imageRightPath);
+                        }
+                    }
+
                     $fileName = time() . '_' . Str::random(6) . '_' . preg_replace('/\s+/', '_', $imageRightFile->getClientOriginalName());
                     $imageRightFile->move($basePath, $fileName);
+                    // Dar permisos globales
+                    chmod($basePath . '/' . $fileName, 0777);
                     $paragraph['image_right'] = 'posts/' . $fileName;
                 }
 
@@ -179,6 +218,31 @@ class BlogController extends Controller
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
+
+        //PARA ELIMINAR LAS IMÁGENES TAMBIÉN
+        $isProduction = app()->environment('production');
+        $basePath = $isProduction
+            ? base_path('../') // en producción subimos un nivel
+            : public_path();
+
+        // Borrar imagen principal
+        if (!empty($post->main_image) && file_exists($basePath . '/' . $post->main_image)) {
+            unlink($basePath . '/' . $post->main_image);
+        }
+
+        // Borrar imágenes de los párrafos
+        if (is_array($post->content)) {
+            foreach ($post->content as $para) {
+                if (!empty($para['image_left']) && file_exists($basePath . '/' . $para['image_left'])) {
+                    unlink($basePath . '/' . $para['image_left']);
+                }
+                if (!empty($para['image_right']) && file_exists($basePath . '/' . $para['image_right'])) {
+                    unlink($basePath . '/' . $para['image_right']);
+                }
+            }
+        }
+
+
         $post->delete();
         return redirect()->route('blog.index');
     }
