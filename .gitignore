@@ -28,3 +28,7 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+#no subimos la carpeta src/public/posts de local porque son pruebas
+/src/public/posts
+
